@@ -9,7 +9,7 @@ export default class Contenu extends Component {
 
     render() {
         return (
-            <div>
+            <div className="Digi-main">
                 <h3>Contenu de l’application ReactJs</h3>
             </div>
         )

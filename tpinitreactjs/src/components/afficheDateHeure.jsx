@@ -12,7 +12,7 @@ export default function afficheDateHeure() {
     let heure = date.toLocaleTimeString();
 
     return (
-        <div>
+        <div className="Digi-footer">
             <h2>Date : {current_date} - Heure : {heure}</h2>
         </div>
     )

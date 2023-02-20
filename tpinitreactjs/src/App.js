@@ -3,7 +3,7 @@
 * Version 1.0
 */
 
-import './App.css';
+import './css/App.css';
 import AfficheNomPrenom from './components/afficheNomPrenom.jsx';
 import AfficheDateHeure from './components/afficheDateHeure.jsx';
 import Contenu from './components/contenu.jsx';
