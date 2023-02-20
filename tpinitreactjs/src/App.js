@@ -3,26 +3,20 @@
 * Version 1.0
 */
 
-import logo from './logo.svg';
 import './App.css';
+import AfficheNomPrenom from './components/afficheNomPrenom.jsx';
+import AfficheDateHeure from './components/afficheDateHeure.jsx';
+import Contenu from './components/contenu.jsx';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <main>
+        <AfficheNomPrenom />
+        <Contenu />
+        <AfficheDateHeure />
+      </main>
+      
     </div>
   );
 }
