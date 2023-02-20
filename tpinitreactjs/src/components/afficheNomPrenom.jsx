@@ -5,7 +5,7 @@
 
 import React from 'react'
 
-export default function afficheNomPrenom() {
+export default function AfficheNomPrenom() {
     return (
         <div className="Digi-header">
             <h2>Bensikhaled Madani</h2>

@@ -5,7 +5,7 @@
 
 import React from 'react'
 
-export default function afficheDateHeure() {
+export default function AfficheDateHeure() {
 
     const date = new Date();
     let current_date = date.toLocaleDateString();
