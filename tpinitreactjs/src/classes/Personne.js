@@ -5,12 +5,12 @@
 
 //Classe "Personne"
 class Personne {
-    Id = 0;
-    Nom = "";
-    Prenom = "";
-    Adresse = "";
-    CodePostal = "";
-    Age = 18;
+    id = 0;
+    nom = "";
+    prenom = "";
+    adresse = "";
+    codePostal = "";
+    age = 18;
 }
 
 //Classe "Personne" exportable par défaut
@@ -19,28 +19,28 @@ export default Personne
 //Liste exportable de trois personnes par un flux JSON
 export let listeDePersonnes = [
     {
-        Id: 1,
-        Nom: "Lessard",
-        Prenom: "Faustin",
-        Adresse: "Rue Hubert de Lisle",
-        CodePostal: "56100",
-        Age: 58,
+        id: 1,
+        nom: "Lessard",
+        prenom: "Faustin",
+        adresse: "Rue Hubert de Lisle",
+        codePostal: "56100",
+        age: 58,
     },
     {
-        Id: 2,
-        Nom: "Turcotte",
-        Prenom: "Cécile",
-        Adresse: "Rue de l'Epeule",
-        CodePostal: "97440",
-        Age: 44,
+        id: 2,
+        nom: "Turcotte",
+        prenom: "Cécile",
+        adresse: "Rue de l'Epeule",
+        codePostal: "97440",
+        age: 44,
     },
     {
-        Id: 3,
-        Nom: "Perreault",
-        Prenom: "Gauthier",
-        Adresse: "Rue Michel Ange",
-        CodePostal: "94270",
-        Age: 72,
+        id: 3,
+        nom: "Perreault",
+        prenom: "Gauthier",
+        adresse: "Rue Michel Ange",
+        codePostal: "94270",
+        age: 72,
     }
 ];
 
