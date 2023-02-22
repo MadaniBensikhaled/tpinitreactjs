@@ -38,6 +38,38 @@ export default function TableauListeDePersonnes() {
         setListePersonnes([...listePersonnes])
     };
 
+    const triPersonnesAsc = () => {
+        const tri = listePersonnes.sort((a, b) => {
+            let fa = a.nom.toLowerCase(),
+                fb = b.nom.toLowerCase();
+        
+            if (fa < fb) {
+                return -1;
+            }
+            if (fa > fb) {
+                return 1;
+            }
+            return 0;
+        });
+        setListePersonnes([...tri])
+    }
+
+    const triPersonnesDesc = () => {
+        const tri = listePersonnes.sort((a, b) => {
+            let fa = a.nom.toLowerCase(),
+                fb = b.nom.toLowerCase();
+        
+            if (fa > fb) {
+                return -1;
+            }
+            if (fa < fb) {
+                return 1;
+            }
+            return 0;
+        });
+        setListePersonnes([...tri])
+    }
+
     return (
         <div>
             <h2>Ajouter une personne</h2>
@@ -47,6 +79,8 @@ export default function TableauListeDePersonnes() {
             }
             <br/><br/>
             <h2>Liste des personnes :</h2>
+            <button onClick={triPersonnesAsc} className="Digi-button">Tri par ordre croissant (par nom)</button>
+            <button onClick={triPersonnesDesc} className="Digi-button">Tri par ordre décroissant (par nom)</button>
             <table>
                 <thead>
                     <tr>
@@ -143,11 +177,10 @@ function CompModificationPersonne({ data, action }) {
 
     const anciennePersonne = useRef("");
 
-    useEffect(() => setPersonne({ ...data }), [data])
-
     useEffect(() => {
+        setPersonne({ ...data });
         anciennePersonne.current = {...data};
-      }, [data]);
+    }, [data])
 
     const valid = () => {
         action(personne)
@@ -181,8 +214,8 @@ function CompModificationPersonne({ data, action }) {
                 <button onClick={valid} className="Digi-button">Valider</button>
             </form>
             <h3>Ancienne valeurs pour la personne :</h3>
-            <p>Prenom : {anciennePersonne.current.prenom}</p>
             <p>Nom : {anciennePersonne.current.nom}</p>
+            <p>Prénom : {anciennePersonne.current.prenom}</p>
             <p>Adresse : {anciennePersonne.current.adresse}</p>
             <p>Code Postal : {anciennePersonne.current.codePostal}</p>
             <p>Âge : {anciennePersonne.current.age}</p>
