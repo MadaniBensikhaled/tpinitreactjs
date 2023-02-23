@@ -5,11 +5,22 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 
-import Personne, { listeDePersonnes } from '../classes/Personne.js';
+import ServicePersonne from '../services/axiosPersonne';
 
 export default function TableauListeDePersonnes() {
 
-    const [listePersonnes, setListePersonnes] = useState([...listeDePersonnes]);
+    const [listePersonnes, setListePersonnes] = useState([])
+    const service = new ServicePersonne();
+
+    const affiche = () => {
+        service.get().then(response => {
+            setListePersonnes(response.data)
+        }).catch((err) => console.log(err))
+    }
+
+    useEffect(() => {
+        affiche()
+    }, [])
 
     const [personne, setPersonne] = useState(null)
 
@@ -17,13 +28,19 @@ export default function TableauListeDePersonnes() {
     const [bModifPersonne, setBModifPersonne] = useState(false)
 
     const ajoutPersonne = (p) => {
-        setListePersonnes([...listePersonnes, p])
+        service.post(p).then(
+            (response) =>
+                affiche()
+        ).catch((err) => console.log(err))
         setBAjoutPersonne(false)
     };
 
     const suppressionPersonne = (e) => {
         if (!e.target.id) return;
-        setListePersonnes(listePersonnes.filter(p => p.id.toString() !== e.target.id.toString()))
+        service.delete(e.target.id).then(
+            (response) =>
+                affiche()
+        ).catch((err) => console.log(err))
     }
     const changePersonne = (e) => {
         if (!e.target.id) return;
@@ -33,16 +50,17 @@ export default function TableauListeDePersonnes() {
     }
 
     const modificationPersonne = (p) => {
-        const index = listePersonnes.findIndex(pe => pe.id === p.id)
-        listePersonnes[index] = p
-        setListePersonnes([...listePersonnes])
+        service.put(p.id, p).then(
+            (response) =>
+                affiche()
+        ).catch((err) => console.log(err))
     };
 
-    const triPersonnesAsc = () => {
-        const tri = listePersonnes.sort((a, b) => {
+    const triPersonnesAsc = async () => {
+        const tri = [...listePersonnes].sort((a, b) => {
             let fa = a.nom.toLowerCase(),
                 fb = b.nom.toLowerCase();
-        
+
             if (fa < fb) {
                 return -1;
             }
@@ -51,14 +69,25 @@ export default function TableauListeDePersonnes() {
             }
             return 0;
         });
-        setListePersonnes([...tri])
+        for (let i = 0; i < listePersonnes.length; i++) {
+            await service.delete(listePersonnes[i].id).then(
+                (response) =>
+                    affiche()
+            ).catch((err) => console.log(err));
+        }
+        for (let i = 0; i < tri.length; i++) {
+            await service.post(tri[i]).then(
+                (response) =>
+                    affiche()
+            ).catch((err) => console.log(err));
+        }
     }
 
-    const triPersonnesDesc = () => {
-        const tri = listePersonnes.sort((a, b) => {
+    const triPersonnesDesc = async () => {
+        const tri = [...listePersonnes].sort((a, b) => {
             let fa = a.nom.toLowerCase(),
                 fb = b.nom.toLowerCase();
-        
+
             if (fa > fb) {
                 return -1;
             }
@@ -67,7 +96,19 @@ export default function TableauListeDePersonnes() {
             }
             return 0;
         });
-        setListePersonnes([...tri])
+        console.log(tri)
+        for (let i = 0; i < listePersonnes.length; i++) {
+            await service.delete(listePersonnes[i].id).then(
+                (response) =>
+                    affiche()
+            ).catch((err) => console.log(err));
+        }
+        for (let i = 0; i < tri.length; i++) {
+            await service.post(tri[i]).then(
+                (response) =>
+                    affiche()
+            ).catch((err) => console.log(err));
+        }
     }
 
     return (
@@ -77,7 +118,7 @@ export default function TableauListeDePersonnes() {
             {bAjoutPersonne &&
                 <CompAjoutPersonne action={ajoutPersonne} id={listePersonnes.length} />
             }
-            <br/><br/>
+            <br /><br />
             <h2>Liste des personnes :</h2>
             <button onClick={triPersonnesAsc} className="Digi-button">Tri par ordre croissant (par nom)</button>
             <button onClick={triPersonnesDesc} className="Digi-button">Tri par ordre décroissant (par nom)</button>
@@ -109,11 +150,11 @@ export default function TableauListeDePersonnes() {
                         </tr>)}
                 </tbody>
             </table>
-            <br/><br/>
+            <br /><br />
             {bModifPersonne &&
                 <CompModificationPersonne action={modificationPersonne} data={personne} />
             }
-            <br/>
+            <br />
         </div>
     )
 }
@@ -121,7 +162,6 @@ export default function TableauListeDePersonnes() {
 
 
 function CompAjoutPersonne({ action, id }) {
-    const [personne, setPersonne] = useState(new Personne())
     const [nom, setNom] = useState('')
     const [prenom, setPrenom] = useState('')
     const [adresse, setAdresse] = useState('')
@@ -130,13 +170,13 @@ function CompAjoutPersonne({ action, id }) {
     const idPersonn = ++id;
 
     const valid = () => {
+        let personne = new Object();
         personne.id = idPersonn;
         personne.nom = nom;
         personne.prenom = prenom;
         personne.adresse = adresse;
         personne.codePostal = codePostal;
         personne.age = age;
-        setPersonne(personne)
         action(personne)
     }
 
@@ -179,7 +219,7 @@ function CompModificationPersonne({ data, action }) {
 
     useEffect(() => {
         setPersonne({ ...data });
-        anciennePersonne.current = {...data};
+        anciennePersonne.current = { ...data };
     }, [data])
 
     const valid = () => {
