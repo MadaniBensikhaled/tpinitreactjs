@@ -69,18 +69,7 @@ export default function TableauListeDePersonnes() {
             }
             return 0;
         });
-        for (let i = 0; i < listePersonnes.length; i++) {
-            await service.delete(listePersonnes[i].id).then(
-                (response) =>
-                    affiche()
-            ).catch((err) => console.log(err));
-        }
-        for (let i = 0; i < tri.length; i++) {
-            await service.post(tri[i]).then(
-                (response) =>
-                    affiche()
-            ).catch((err) => console.log(err));
-        }
+        setListePersonnes([...tri])
     }
 
     const triPersonnesDesc = async () => {
@@ -96,19 +85,7 @@ export default function TableauListeDePersonnes() {
             }
             return 0;
         });
-        console.log(tri)
-        for (let i = 0; i < listePersonnes.length; i++) {
-            await service.delete(listePersonnes[i].id).then(
-                (response) =>
-                    affiche()
-            ).catch((err) => console.log(err));
-        }
-        for (let i = 0; i < tri.length; i++) {
-            await service.post(tri[i]).then(
-                (response) =>
-                    affiche()
-            ).catch((err) => console.log(err));
-        }
+        setListePersonnes([...tri])
     }
 
     return (
