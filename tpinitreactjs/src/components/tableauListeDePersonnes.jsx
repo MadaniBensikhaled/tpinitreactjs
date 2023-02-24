@@ -3,14 +3,17 @@
 * Version 1.0
 */
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, Fragment } from 'react'
+
+import { BrowserRouter as Router, Route, Link, Routes, useParams, useNavigate, useLocation } from "react-router-dom";
 
 import ServicePersonne from '../services/axiosPersonne';
+
+const service = new ServicePersonne();
 
 export default function TableauListeDePersonnes() {
 
     const [listePersonnes, setListePersonnes] = useState([])
-    const service = new ServicePersonne();
 
     const affiche = () => {
         service.get().then(response => {
@@ -27,14 +30,6 @@ export default function TableauListeDePersonnes() {
     const [bAjoutPersonne, setBAjoutPersonne] = useState(false)
     const [bModifPersonne, setBModifPersonne] = useState(false)
 
-    const ajoutPersonne = (p) => {
-        service.post(p).then(
-            (response) =>
-                affiche()
-        ).catch((err) => console.log(err))
-        setBAjoutPersonne(false)
-    };
-
     const suppressionPersonne = (e) => {
         if (!e.target.id) return;
         service.delete(e.target.id).then(
@@ -42,19 +37,6 @@ export default function TableauListeDePersonnes() {
                 affiche()
         ).catch((err) => console.log(err))
     }
-    const changePersonne = (e) => {
-        if (!e.target.id) return;
-        setPersonne(listePersonnes[e.target.id]);
-        setBModifPersonne(true)
-        setBAjoutPersonne(false)
-    }
-
-    const modificationPersonne = (p) => {
-        service.put(p.id, p).then(
-            (response) =>
-                affiche()
-        ).catch((err) => console.log(err))
-    };
 
     const triPersonnesAsc = async () => {
         const tri = [...listePersonnes].sort((a, b) => {
@@ -91,10 +73,7 @@ export default function TableauListeDePersonnes() {
     return (
         <div>
             <h2>Ajouter une personne</h2>
-            <button onClick={(e) => { setBAjoutPersonne(!bAjoutPersonne); setBModifPersonne(false) }} className="Digi-button">Ajouter une personne</button>
-            {bAjoutPersonne &&
-                <CompAjoutPersonne action={ajoutPersonne} id={listePersonnes.length} />
-            }
+            <Link to={`/ajouter/${listePersonnes.length}`}><button className="Digi-button">Ajouter une personne</button></Link>
             <br /><br />
             <h2>Liste des personnes :</h2>
             <button onClick={triPersonnesAsc} className="Digi-button">Tri par ordre croissant (par nom)</button>
@@ -123,22 +102,25 @@ export default function TableauListeDePersonnes() {
                             <td>{p.codePostal}</td>
                             <td>{p.age}</td>
                             <td><button id={p.id} onClick={suppressionPersonne} className="Digi-button">Supprimer la personne</button></td>
-                            <td><button id={index} onClick={changePersonne} className="Digi-button">Modifier la personne</button></td>
+                            <td><Link to={`/modifier/${p.id}`}><button id={index} className="Digi-button">Modifier la personne</button></Link></td>
                         </tr>)}
                 </tbody>
             </table>
             <br /><br />
-            {bModifPersonne &&
-                <CompModificationPersonne action={modificationPersonne} data={personne} />
-            }
             <br />
         </div>
     )
 }
 
+const ajoutPersonne = (p) => {
+    service.post(p).catch((err) => console.log(err))
+};
 
+const modificationPersonne = (p) => {
+    service.put(p.id, p).catch((err) => console.log(err))
+};
 
-function CompAjoutPersonne({ action, id }) {
+function CompAjoutPersonne({ id }) {
     const [nom, setNom] = useState('')
     const [prenom, setPrenom] = useState('')
     const [adresse, setAdresse] = useState('')
@@ -154,11 +136,13 @@ function CompAjoutPersonne({ action, id }) {
         personne.adresse = adresse;
         personne.codePostal = codePostal;
         personne.age = age;
-        action(personne)
+        ajoutPersonne(personne)
+        window.location.href = "/";
     }
 
     return (
         <div>
+            <h2>Ajouter une personne</h2>
             <h3>(Nouvel ID égale à {idPersonn})</h3>
             <form noValidate onSubmit={(e) => e.preventDefault(false)}>
                 <label>Nom :
@@ -181,6 +165,7 @@ function CompAjoutPersonne({ action, id }) {
                     <input type='text'
                         value={age} size='30'
                         onChange={(e) => { setAge(e.target.value) }} /></label><br />
+                <br/>
                 <button onClick={valid} className="Digi-button">Ajout</button>
             </form>
 
@@ -189,7 +174,7 @@ function CompAjoutPersonne({ action, id }) {
 }
 
 
-function CompModificationPersonne({ data, action }) {
+function CompModificationPersonne({ data }) {
     const [personne, setPersonne] = useState({ ...data })
 
     const anciennePersonne = useRef("");
@@ -200,7 +185,8 @@ function CompModificationPersonne({ data, action }) {
     }, [data])
 
     const valid = () => {
-        action(personne)
+        modificationPersonne(personne)
+        window.location.href = "/";
     }
 
     return (
@@ -240,3 +226,33 @@ function CompModificationPersonne({ data, action }) {
         </div>
     );
 }
+
+// Ajouter une personne
+export const Ajouter = () => {
+    const { id } = useParams()
+    return (
+        <Fragment>
+            <CompAjoutPersonne id={id} />
+        </Fragment>
+    )
+};
+
+// Ajouter une personne
+export const Modifier = () => {
+    const { id } = useParams()
+
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        service.getId(id).then(response => {
+            setData(response.data)
+        }).catch((err) => console.log(err));
+    }, [])
+
+    console.log(data)
+    return (
+        <Fragment>
+            <CompModificationPersonne data={data} />
+        </Fragment>
+    )
+};
